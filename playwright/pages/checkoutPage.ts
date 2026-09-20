@@ -13,10 +13,20 @@ export class CheckoutPage {
   readonly cardCvc: Locator;
   readonly storeName: Locator;
   readonly placeOrder: Locator;
+  readonly promoInput: Locator;
+  readonly promoApply: Locator;
+  readonly promoRemove: Locator;
+  readonly promoError: Locator;
+  readonly promoApplied: Locator;
+  readonly discountAmount: Locator;
+  readonly subtotalAmount: Locator;
+  readonly totalAmount: Locator;
 
   constructor(private readonly page: Page) {
     this.pageRoot = page.getByTestId("checkout-page");
-    this.title = this.pageRoot.getByRole("heading");
+    // The checkout page renders one <h2> page title plus an <h6> per section
+    // (MUI maps subtitle1 to h6) — .first() keeps this the page title only.
+    this.title = this.pageRoot.getByRole("heading").first();
     this.backToShop = page.getByTestId("back-to-shop");
     this.name = page.getByTestId("checkout-name");
     this.email = page.getByTestId("checkout-email");
@@ -26,6 +36,14 @@ export class CheckoutPage {
     this.cardCvc = page.getByTestId("checkout-card-cvc");
     this.storeName = page.getByTestId("checkout-store-name");
     this.placeOrder = page.getByTestId("place-order");
+    this.promoInput = page.getByTestId("checkout-promo-input");
+    this.promoApply = page.getByTestId("checkout-promo-apply");
+    this.promoRemove = page.getByTestId("checkout-promo-remove");
+    this.promoError = page.getByTestId("checkout-promo-error");
+    this.promoApplied = page.getByTestId("checkout-promo-applied");
+    this.discountAmount = page.getByTestId("checkout-discount-amount");
+    this.subtotalAmount = page.getByTestId("checkout-subtotal");
+    this.totalAmount = page.getByTestId("checkout-total");
   }
 
   error(field: string): Locator {
@@ -70,5 +88,10 @@ export class CheckoutPage {
 
   async goBackToShop(): Promise<void> {
     await this.backToShop.click();
+  }
+
+  async applyPromoCode(code: string): Promise<void> {
+    await this.promoInput.fill(code);
+    await this.promoApply.click();
   }
 }

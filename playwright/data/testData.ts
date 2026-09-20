@@ -18,4 +18,12 @@ export const CARD = {
   cvc: "123",
 } as const;
 
+export const PROMO_CODES = {
+  percentOff: "WELCOME10",
+  fixedOff: "SAVE5",
+  fixedOffMinOrderUsd: 15,
+  expired: "BEETEES2024",
+  unknown: "NOTAREALCODE",
+} as const;
+
 export type CountryCode = "BR" | "US";
