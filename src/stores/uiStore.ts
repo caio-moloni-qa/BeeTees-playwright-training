@@ -6,7 +6,8 @@ export type AppView =
   | "confirmation"
   | "login"
   | "signup"
-  | "profile";
+  | "profile"
+  | "hunger";
 
 export type MenuFilter = "all" | "burger" | "tenders" | "combo" | "drink" | "side";
 

@@ -10,6 +10,7 @@ import { useInitialDelivery } from "./hooks/useInitialDelivery";
 import { CartDrawer } from "./components/Cart/CartDrawer";
 import { CheckoutPage } from "./components/Checkout/CheckoutPage";
 import { ConfirmationPage } from "./components/Confirmation/ConfirmationPage";
+import { HungerMeterPage } from "./components/Hunger/HungerMeterPage";
 import { LocationDrawer } from "./components/Location/LocationDrawer";
 import { ItemCustomizerDialog } from "./components/Menu/ItemCustomizerDialog";
 import { MenuPage } from "./components/Menu/MenuPage";
@@ -97,6 +98,7 @@ export function App() {
       {view === "login" && <LoginPage />}
       {view === "signup" && <SignupPage />}
       {view === "profile" && <ProfilePage />}
+      {view === "hunger" && <HungerMeterPage />}
       {view === "shop" && <MenuPage />}
       {view !== "confirmation" && (
         <>
