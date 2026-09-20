@@ -5,8 +5,10 @@ import { defineConfig, devices } from "@playwright/test";
  * The Vite dev server proxies /api → http://localhost:3001.
  */
 export default defineConfig({
-  testDir: "./playwright/tests",
-  testMatch: "**/*.spec.ts",
+  testDir: "./playwright",
+  // Demos are collectable by the runner but only through their own project (§3 of
+  // .github/agents/playwright-demo-recordings-playbook.md) — never by `npx playwright test`.
+  testMatch: ["**/tests/**/*.spec.ts", "**/Demo/**/*.demo.ts"],
 
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -42,7 +44,26 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
+      testMatch: "**/tests/**/*.spec.ts",
       use: { ...devices["Desktop Chrome"] },
+    },
+
+    // ── Demo walkthroughs ────────────────────────────────────────────────
+    // Headed, slowed, always video-recorded — for screen recordings, never part
+    // of a test run. Run with: npm run demo:<name>
+    {
+      name: "demo",
+      testMatch: "**/Demo/**/*.demo.ts",
+      timeout: 20 * 60_000, // narration is slow; a demo is minutes, not seconds
+      use: {
+        ...devices["Desktop Chrome"],
+        headless: false,
+        viewport: { width: 1440, height: 900 },
+        video: { mode: "on", size: { width: 1440, height: 900 } },
+        screenshot: "off", // stills are noise here
+        trace: "off", // tracing visibly costs frames
+        launchOptions: { slowMo: Number(process.env.DEMO_SLOWMO_MS ?? 600) },
+      },
     },
   ],
 
