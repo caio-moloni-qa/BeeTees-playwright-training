@@ -208,7 +208,7 @@ Sessions use `bt_sid` HttpOnly cookie + in-memory server `Map`.
 - Delivery drawer with store availability
 - Cart drawer with quantity controls and toast feedback
 - Item customizer with add-ons
-- Checkout with card validation, tip, and donation controls
+- Checkout with card validation, tip, donation, and promo code controls
 - Confirmation page with ETA and delivery summary
 
 ## Architecture
@@ -301,6 +301,14 @@ Number: 4111111111111111
 Expiry: 1228
 CVC: 123
 ```
+
+Promo codes (checkout, client-side validation, no API round-trip):
+
+| Code | Type | Rule |
+|---|---|---|
+| `WELCOME10` | percent | 10% off the subtotal, no minimum |
+| `SAVE5` | fixed | $5 off, $15 minimum order |
+| `BEETEES2024` | percent | always expired — for negative testing |
 
 ## MCP
 
