@@ -35,6 +35,13 @@ function hashPassword(password) {
   return createHash("sha256").update(`beetee:${password}`).digest("hex");
 }
 
+function hashResetToken(token) {
+  return createHash("sha256").update(`beetee-reset:${token}`).digest("hex");
+}
+
+/** Deterministic, always-expired token for negative-path testing of the reset flow. */
+const EXPIRED_RESET_TOKEN = "expired-demo-reset-token";
+
 try {
   await client.query("BEGIN");
 
@@ -209,6 +216,24 @@ try {
           customizationSummary: [],
         },
       ]),
+    ]
+  );
+
+  await client.query(
+    `
+      INSERT INTO password_reset_tokens (id, user_id, token_hash, expires_at, used_at)
+      VALUES ($1, $2, $3, $4, NULL)
+      ON CONFLICT (id)
+      DO UPDATE SET
+        token_hash = EXCLUDED.token_hash,
+        expires_at = EXCLUDED.expires_at,
+        used_at = NULL
+    `,
+    [
+      "demo-expired-reset-token",
+      "demo-user",
+      hashResetToken(EXPIRED_RESET_TOKEN),
+      "2020-01-01T00:00:00Z",
     ]
   );
 

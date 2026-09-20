@@ -15,6 +15,8 @@ import { ItemCustomizerDialog } from "./components/Menu/ItemCustomizerDialog";
 import { MenuPage } from "./components/Menu/MenuPage";
 import { LoginPage } from "./components/Auth/LoginPage";
 import { SignupPage } from "./components/Auth/SignupPage";
+import { ForgotPasswordPage } from "./components/Auth/ForgotPasswordPage";
+import { ResetPasswordPage } from "./components/Auth/ResetPasswordPage";
 import { ProfilePage } from "./components/Profile/ProfilePage";
 import { PageSpinner } from "./components/feedback/PageSpinner";
 import { Toast } from "./components/feedback/Toast";
@@ -96,6 +98,8 @@ export function App() {
       {view === "confirmation" && <ConfirmationPage />}
       {view === "login" && <LoginPage />}
       {view === "signup" && <SignupPage />}
+      {view === "forgot-password" && <ForgotPasswordPage />}
+      {view === "reset-password" && <ResetPasswordPage />}
       {view === "profile" && <ProfilePage />}
       {view === "shop" && <MenuPage />}
       {view !== "confirmation" && (

@@ -8,6 +8,7 @@ export class Header {
   readonly locationToggle: Locator;
   readonly locationSetIndicator: Locator;
   readonly storeBanner: Locator;
+  readonly profileToggle: Locator;
 
   constructor(private readonly page: Page) {
     this.cartToggle = page.getByTestId("cart-toggle");
@@ -17,6 +18,7 @@ export class Header {
     this.locationToggle = page.getByTestId("location-toggle");
     this.locationSetIndicator = page.getByTestId("location-set-indicator");
     this.storeBanner = page.getByTestId("menu-store-banner");
+    this.profileToggle = page.getByTestId("profile-toggle");
   }
 
   async openCart(options?: { force?: boolean }): Promise<void> {
@@ -29,5 +31,10 @@ export class Header {
 
   async goHome(): Promise<void> {
     await this.home.click();
+  }
+
+  /** Opens login for a guest, or profile for an authenticated user. */
+  async openProfile(): Promise<void> {
+    await this.profileToggle.click();
   }
 }
