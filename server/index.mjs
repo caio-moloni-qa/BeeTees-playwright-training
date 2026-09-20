@@ -11,11 +11,15 @@ import {
 import { loadContent } from "./contentRepository.mjs";
 import { lookupViaCep } from "./viacep.mjs";
 import {
+  consumePasswordResetToken,
   createOrder,
+  createPasswordResetToken,
   createUser,
+  findUserByEmail,
   findUserByEmailAndPassword,
   getUserById,
   listOrders,
+  updateUserPassword,
   updateUserProfile,
 } from "./authRepository.mjs";
 
@@ -343,6 +347,61 @@ app.post("/api/auth/signup", async (req, res) => {
       return res.status(409).json({ error: "An account already exists for this email" });
     }
     const msg = e instanceof Error ? e.message : "Signup failed";
+    res.status(503).json({ error: msg });
+  }
+});
+
+/**
+ * Training-app simplification: with no real mail service to deliver the
+ * reset link, the raw token is returned to the client under `devResetToken`
+ * so the flow (and Playwright) can complete without an inbox. A real
+ * deployment would email the link and never put a live token in a response
+ * body. Note this also means an attacker can tell whether an email is
+ * registered by whether `devResetToken` comes back — acceptable for a
+ * training sandbox, a real bug report in production.
+ */
+app.post("/api/auth/forgot-password", async (req, res) => {
+  const body = req.body || {};
+  const email = typeof body.email === "string" ? body.email.trim() : "";
+  if (!email || !email.includes("@") || !email.split("@")[1]?.includes(".")) {
+    return res.status(400).json({ error: "Enter a valid email address" });
+  }
+
+  try {
+    const user = await findUserByEmail(email);
+    const devResetToken = user ? await createPasswordResetToken(user.id) : null;
+    res.json({
+      ok: true,
+      message: "If an account exists for that email, a reset link has been sent.",
+      devResetToken,
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Unable to process request";
+    res.status(503).json({ error: msg });
+  }
+});
+
+app.post("/api/auth/reset-password", async (req, res) => {
+  const body = req.body || {};
+  const token = typeof body.token === "string" ? body.token.trim() : "";
+  const newPassword = typeof body.newPassword === "string" ? body.newPassword : "";
+
+  if (!token) {
+    return res.status(400).json({ error: "Reset token is required" });
+  }
+  if (newPassword.length < 8) {
+    return res.status(400).json({ error: "Password must be at least 8 characters" });
+  }
+
+  try {
+    const userId = await consumePasswordResetToken(token);
+    if (!userId) {
+      return res.status(400).json({ error: "This reset link is invalid or has expired." });
+    }
+    await updateUserPassword(userId, newPassword);
+    res.json({ ok: true });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Unable to reset password";
     res.status(503).json({ error: msg });
   }
 });
