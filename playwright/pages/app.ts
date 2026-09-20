@@ -2,6 +2,7 @@ import type { Locator, Page } from "@playwright/test";
 import { CartDrawer } from "./cartDrawer";
 import { CheckoutPage } from "./checkoutPage";
 import { ConfirmationPage } from "./confirmationPage";
+import { HungerMeterPage } from "./hungerMeterPage";
 import { Header } from "./header";
 import { LocationDrawer } from "./locationDrawer";
 import { MenuPage } from "./menuPage";
@@ -14,6 +15,7 @@ export class App {
   readonly header: Header;
   readonly location: LocationDrawer;
   readonly menu: MenuPage;
+  readonly hunger: HungerMeterPage;
   readonly toast: Locator;
 
   constructor(private readonly page: Page) {
@@ -23,6 +25,7 @@ export class App {
     this.header = new Header(page);
     this.location = new LocationDrawer(page);
     this.menu = new MenuPage(page);
+    this.hunger = new HungerMeterPage(page);
     this.toast = page.getByTestId("cart-toast");
   }
 

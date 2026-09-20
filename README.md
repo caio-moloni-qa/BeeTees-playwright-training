@@ -203,6 +203,7 @@ Sessions use `bt_sid` HttpOnly cookie + in-memory server `Map`.
 - Promo carousel
 - Menu category filter and search
 - Product spicy badges and calories meter
+- "Feeling hungry?" meter on its own screen — picks 4 items from the catalog by calorie quartile, from a little hungry to starving
 - Guest checkout flow
 - DB-backed login, mandatory-location signup, profile, logout, previous orders, localized reorder prompt, and success animations
 - Delivery drawer with store availability
@@ -218,7 +219,10 @@ src/App.tsx
 |-- MenuPage
 |   |-- PromoBanner
 |   |-- CategoryFilter
+|   |-- HungerButton
 |   |-- MenuSearch
+|   `-- ProductCard
+|-- HungerMeterPage
 |   `-- ProductCard
 |-- CartDrawer
 |-- LocationDrawer
