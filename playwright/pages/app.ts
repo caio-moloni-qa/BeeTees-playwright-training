@@ -2,7 +2,7 @@ import type { Locator, Page } from "@playwright/test";
 import { CartDrawer } from "./cartDrawer";
 import { CheckoutPage } from "./checkoutPage";
 import { ConfirmationPage } from "./confirmationPage";
-import { ForgotPasswordPage, LoginPage, ResetPasswordPage } from "./authPages";
+import { ForgotPasswordPage, LoginPage, ResetPasswordPage, SignupPage } from "./authPages";
 import { HungerMeterPage } from "./hungerMeterPage";
 import { Header } from "./header";
 import { LocationDrawer } from "./locationDrawer";
@@ -17,6 +17,7 @@ export class App {
   readonly location: LocationDrawer;
   readonly menu: MenuPage;
   readonly login: LoginPage;
+  readonly signup: SignupPage;
   readonly forgotPassword: ForgotPasswordPage;
   readonly resetPassword: ResetPasswordPage;
   readonly hunger: HungerMeterPage;
@@ -30,6 +31,7 @@ export class App {
     this.location = new LocationDrawer(page);
     this.menu = new MenuPage(page);
     this.login = new LoginPage(page);
+    this.signup = new SignupPage(page);
     this.forgotPassword = new ForgotPasswordPage(page);
     this.resetPassword = new ResetPasswordPage(page);
     this.hunger = new HungerMeterPage(page);
