@@ -12,6 +12,7 @@ export class MenuPage {
   readonly searchToggle: Locator;
   readonly searchInput: Locator;
   readonly searchClose: Locator;
+  readonly hungerButton: Locator;
 
   constructor(private readonly page: Page) {
     this.header = new Header(page);
@@ -23,6 +24,7 @@ export class MenuPage {
     this.searchToggle = page.getByTestId("menu-search-toggle");
     this.searchInput = page.getByTestId("menu-search");
     this.searchClose = page.getByTestId("menu-search-close");
+    this.hungerButton = page.getByTestId("hunger-button");
   }
 
   async goto(): Promise<void> {
@@ -89,5 +91,9 @@ export class MenuPage {
   async searchFor(query: string): Promise<void> {
     await this.openSearch();
     await this.searchInput.fill(query);
+  }
+
+  async openHungerMeter(): Promise<void> {
+    await this.hungerButton.click();
   }
 }

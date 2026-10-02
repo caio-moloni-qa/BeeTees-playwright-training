@@ -3,6 +3,7 @@ import { CartDrawer } from "./cartDrawer";
 import { CheckoutPage } from "./checkoutPage";
 import { ConfirmationPage } from "./confirmationPage";
 import { ForgotPasswordPage, LoginPage, ResetPasswordPage } from "./authPages";
+import { HungerMeterPage } from "./hungerMeterPage";
 import { Header } from "./header";
 import { LocationDrawer } from "./locationDrawer";
 import { MenuPage } from "./menuPage";
@@ -18,6 +19,7 @@ export class App {
   readonly login: LoginPage;
   readonly forgotPassword: ForgotPasswordPage;
   readonly resetPassword: ResetPasswordPage;
+  readonly hunger: HungerMeterPage;
   readonly toast: Locator;
 
   constructor(private readonly page: Page) {
@@ -30,6 +32,7 @@ export class App {
     this.login = new LoginPage(page);
     this.forgotPassword = new ForgotPasswordPage(page);
     this.resetPassword = new ResetPasswordPage(page);
+    this.hunger = new HungerMeterPage(page);
     this.toast = page.getByTestId("cart-toast");
   }
 

@@ -4,6 +4,7 @@ import { products } from "../../data/products";
 import { useUiStore } from "../../stores/uiStore";
 import { Header } from "../Header/Header";
 import { CategoryFilter } from "./CategoryFilter";
+import { HungerButton } from "./HungerButton";
 import { MenuSearch } from "./MenuSearch";
 import { ProductCard } from "./ProductCard";
 import { PromoBanner } from "./PromoBanner";
@@ -43,8 +44,18 @@ export function MenuPage() {
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 1.5,
+            mb: 2,
+          }}
+        >
           <CategoryFilter />
+          <HungerButton />
         </Box>
         <MenuSearch />
         <Box

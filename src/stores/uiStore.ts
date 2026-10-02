@@ -8,7 +8,8 @@ export type AppView =
   | "signup"
   | "profile"
   | "forgot-password"
-  | "reset-password";
+  | "reset-password"
+  | "hunger";
 
 export type MenuFilter = "all" | "burger" | "tenders" | "combo" | "drink" | "side";
 
