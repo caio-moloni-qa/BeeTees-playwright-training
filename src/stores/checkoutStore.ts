@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { validatePromoCode, type AppliedPromo } from "../checkout/promoCodes";
 
 export type PaymentMethod = "card" | "pay-in-restaurant";
 export type TipPercent = 0 | 10 | 15 | 20;
@@ -45,6 +46,10 @@ type CheckoutState = {
   errors: Record<string, string>;
   /** Filled in after submit so the confirmation page can greet the user. */
   confirmedUserName: string;
+  /** Raw text in the promo code field, before it's applied. */
+  promoCodeInput: string;
+  appliedPromo: AppliedPromo | null;
+  promoError: string;
 
   setField: <K extends keyof CheckoutForm>(field: K, value: CheckoutForm[K]) => void;
   resetForm: () => void;
@@ -52,12 +57,18 @@ type CheckoutState = {
   clearError: (field: string) => void;
   clearAllErrors: () => void;
   setConfirmedUserName: (name: string) => void;
+  setPromoCodeInput: (value: string) => void;
+  applyPromoCode: (subtotalUsd: number) => void;
+  removePromoCode: () => void;
 };
 
 export const useCheckoutStore = create<CheckoutState>((set) => ({
   form: emptyForm(),
   errors: {},
   confirmedUserName: "",
+  promoCodeInput: "",
+  appliedPromo: null,
+  promoError: "",
 
   setField: (field, value) =>
     set((state) => ({
@@ -66,7 +77,14 @@ export const useCheckoutStore = create<CheckoutState>((set) => ({
       errors: state.errors[field] ? omitKey(state.errors, field) : state.errors,
     })),
 
-  resetForm: () => set({ form: emptyForm(), errors: {} }),
+  resetForm: () =>
+    set({
+      form: emptyForm(),
+      errors: {},
+      promoCodeInput: "",
+      appliedPromo: null,
+      promoError: "",
+    }),
 
   setErrors: (errors) => set({ errors }),
   clearError: (field) =>
@@ -75,6 +93,17 @@ export const useCheckoutStore = create<CheckoutState>((set) => ({
     ),
   clearAllErrors: () => set({ errors: {} }),
   setConfirmedUserName: (name) => set({ confirmedUserName: name }),
+
+  setPromoCodeInput: (value) => set({ promoCodeInput: value, promoError: "" }),
+  applyPromoCode: (subtotalUsd) =>
+    set((state) => {
+      const result = validatePromoCode(state.promoCodeInput, subtotalUsd);
+      if (!result.valid) {
+        return { promoError: result.error };
+      }
+      return { appliedPromo: result.promo, promoError: "", promoCodeInput: "" };
+    }),
+  removePromoCode: () => set({ appliedPromo: null, promoError: "", promoCodeInput: "" }),
 }));
 
 function omitKey<T extends Record<string, unknown>>(obj: T, key: string): T {

@@ -20,6 +20,7 @@ import {
 import { getProductById } from "../../data/products";
 import { formatPrice, productShortName, t } from "../../i18n/locale";
 import { DonationSection } from "./DonationSection";
+import { PromoCodeSection } from "./PromoCodeSection";
 
 const TIP_OPTIONS: TipPercent[] = [0, 10, 15, 20];
 
@@ -29,6 +30,7 @@ export function OrderSummary() {
   const subtotal = useCartStore(selectSubtotal);
   const f = useCheckoutStore((s) => s.form);
   const setField = useCheckoutStore((s) => s.setField);
+  const appliedPromo = useCheckoutStore((s) => s.appliedPromo);
 
   const tipAmount = (subtotal * f.tipPercent) / 100;
   const donationAmount =
@@ -37,7 +39,9 @@ export function OrderSummary() {
       : f.donationType === "percent"
         ? (subtotal * f.donationAmount) / 100
         : 0;
-  const grandTotal = subtotal + tipAmount + donationAmount;
+  const discountAmount = appliedPromo?.discountUsd ?? 0;
+  // A fixed-amount code can never push the total below zero.
+  const grandTotal = Math.max(0, subtotal + tipAmount + donationAmount - discountAmount);
 
   return (
     <Paper variant="outlined" sx={{ p: 2.5 }} aria-labelledby="checkout-summary-title">
@@ -92,6 +96,10 @@ export function OrderSummary() {
 
       <Divider sx={{ my: 2 }} />
 
+      <Box sx={{ mb: 2 }}>
+        <PromoCodeSection subtotalUsd={subtotal} />
+      </Box>
+
       <Box data-testid="checkout-tip-selector" sx={{ mb: 2 }}>
         <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.75 }}>
           {t("checkoutTip")}
@@ -132,6 +140,20 @@ export function OrderSummary() {
             {formatPrice(subtotal)}
           </Typography>
         </Stack>
+        {appliedPromo && (
+          <Stack
+            direction="row"
+            sx={{ justifyContent: "space-between" }}
+            data-testid="checkout-discount-amount"
+          >
+            <Typography variant="body2">
+              {t("checkoutDiscount")} ({appliedPromo.label})
+            </Typography>
+            <Typography variant="body2" color="success.main">
+              -{formatPrice(discountAmount)}
+            </Typography>
+          </Stack>
+        )}
         {f.tipPercent > 0 && (
           <Stack
             direction="row"
