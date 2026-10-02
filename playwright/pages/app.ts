@@ -2,6 +2,7 @@ import type { Locator, Page } from "@playwright/test";
 import { CartDrawer } from "./cartDrawer";
 import { CheckoutPage } from "./checkoutPage";
 import { ConfirmationPage } from "./confirmationPage";
+import { ForgotPasswordPage, LoginPage, ResetPasswordPage } from "./authPages";
 import { Header } from "./header";
 import { LocationDrawer } from "./locationDrawer";
 import { MenuPage } from "./menuPage";
@@ -14,6 +15,9 @@ export class App {
   readonly header: Header;
   readonly location: LocationDrawer;
   readonly menu: MenuPage;
+  readonly login: LoginPage;
+  readonly forgotPassword: ForgotPasswordPage;
+  readonly resetPassword: ResetPasswordPage;
   readonly toast: Locator;
 
   constructor(private readonly page: Page) {
@@ -23,11 +27,18 @@ export class App {
     this.header = new Header(page);
     this.location = new LocationDrawer(page);
     this.menu = new MenuPage(page);
+    this.login = new LoginPage(page);
+    this.forgotPassword = new ForgotPasswordPage(page);
+    this.resetPassword = new ResetPasswordPage(page);
     this.toast = page.getByTestId("cart-toast");
   }
 
   async gotoMenu(): Promise<void> {
     await this.menu.goto();
+  }
+
+  async openLogin(): Promise<void> {
+    await this.header.openProfile();
   }
 
   async saveLocation(zip: string, country: CountryCode): Promise<void> {

@@ -59,6 +59,42 @@ export async function signupUser(body: {
   return data.user;
 }
 
+export type ForgotPasswordResult = {
+  message: string;
+  /** Training-app only: a real deployment emails the link instead of returning it. */
+  devResetToken: string | null;
+};
+
+export async function requestPasswordReset(email: string): Promise<ForgotPasswordResult> {
+  const res = await fetch("/api/auth/forgot-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    throw await readError(res, "Unable to process request");
+  }
+  const data = (await res.json()) as {
+    ok: boolean;
+    message: string;
+    devResetToken: string | null;
+  };
+  return { message: data.message, devResetToken: data.devResetToken };
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<void> {
+  const res = await fetch("/api/auth/reset-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ token, newPassword }),
+  });
+  if (!res.ok) {
+    throw await readError(res, "Unable to reset password");
+  }
+}
+
 export async function logoutUser(): Promise<void> {
   const res = await fetch("/api/auth/logout", {
     method: "POST",

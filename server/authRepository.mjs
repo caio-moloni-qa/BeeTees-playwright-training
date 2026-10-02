@@ -13,6 +13,13 @@ export function hashPassword(password) {
   return createHash("sha256").update(`beetee:${password}`).digest("hex");
 }
 
+/** Reset tokens are stored hashed, same as passwords — the raw token only ever lives client-side. */
+export function hashResetToken(token) {
+  return createHash("sha256").update(`beetee-reset:${token}`).digest("hex");
+}
+
+const RESET_TOKEN_TTL_MS = 30 * 60 * 1000;
+
 function publicUser(row, location = null) {
   if (!row) {
     return null;
@@ -187,6 +194,61 @@ export async function updateUserProfile(userId, body) {
   } finally {
     client.release();
   }
+}
+
+export async function findUserByEmail(email) {
+  const result = await pool.query(
+    "SELECT * FROM users WHERE lower(email) = lower($1) LIMIT 1",
+    [email]
+  );
+  return result.rows[0] ? publicUser(result.rows[0]) : null;
+}
+
+/** Returns the raw token — only the hash is ever persisted. */
+export async function createPasswordResetToken(userId) {
+  const token = randomUUID();
+  const id = randomUUID();
+  const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+  await pool.query(
+    `
+      INSERT INTO password_reset_tokens (id, user_id, token_hash, expires_at)
+      VALUES ($1, $2, $3, $4)
+    `,
+    [id, userId, hashResetToken(token), expiresAt]
+  );
+  return token;
+}
+
+/**
+ * Validates a raw token against its stored hash, checking it is neither
+ * expired nor already used. Returns the owning userId, or null.
+ */
+export async function consumePasswordResetToken(rawToken) {
+  const result = await pool.query(
+    `
+      SELECT id, user_id, expires_at, used_at
+      FROM password_reset_tokens
+      WHERE token_hash = $1
+      LIMIT 1
+    `,
+    [hashResetToken(rawToken)]
+  );
+  const row = result.rows[0];
+  if (!row || row.used_at || new Date(row.expires_at) <= new Date()) {
+    return null;
+  }
+  await pool.query(
+    "UPDATE password_reset_tokens SET used_at = now() WHERE id = $1",
+    [row.id]
+  );
+  return row.user_id;
+}
+
+export async function updateUserPassword(userId, newPassword) {
+  await pool.query(
+    "UPDATE users SET password_hash = $2, updated_at = now() WHERE id = $1",
+    [userId, hashPassword(newPassword)]
+  );
 }
 
 export async function createOrder(userId, order) {
