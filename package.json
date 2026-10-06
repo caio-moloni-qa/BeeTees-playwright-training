@@ -16,7 +16,10 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:report": "playwright show-report",
-    "demo:guest-checkout-br": "playwright test --project=demo playwright/Demo/guest-checkout-br.demo.ts"
+    "demo:guest-checkout-br": "playwright test --project=demo playwright/Demo/guest-checkout-br.demo.ts",
+    "demo:promo-codes-checkout": "playwright test --project=demo playwright/Demo/promo-codes-checkout.demo.ts",
+    "demo:password-reset-flow": "playwright test --project=demo playwright/Demo/password-reset-flow.demo.ts",
+    "demo:hunger-meter": "playwright test --project=demo playwright/Demo/hunger-meter.demo.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

@@ -76,7 +76,11 @@ export function LoginPage() {
                 {t("authLoginSubtitle")}
               </Typography>
             </Box>
-            {error && <Alert severity="error">{error}</Alert>}
+            {error && (
+              <Alert severity="error" data-testid="login-error">
+                {error}
+              </Alert>
+            )}
             <TextField
               label={t("authEmail")}
               type="email"
@@ -85,6 +89,7 @@ export function LoginPage() {
               autoComplete="email"
               required
               fullWidth
+              slotProps={{ htmlInput: { "data-testid": "login-email" } }}
             />
             <TextField
               label={t("authPassword")}
@@ -94,6 +99,7 @@ export function LoginPage() {
               autoComplete="current-password"
               required
               fullWidth
+              slotProps={{ htmlInput: { "data-testid": "login-password" } }}
             />
             <Button
               type="submit"
@@ -101,8 +107,18 @@ export function LoginPage() {
               size="large"
               startIcon={<LoginRoundedIcon />}
               disabled={loading}
+              data-testid="login-submit"
             >
               {t("authLogin")}
+            </Button>
+            <Button
+              type="button"
+              variant="text"
+              size="small"
+              onClick={() => setView("forgot-password")}
+              data-testid="login-forgot-password"
+            >
+              {t("authForgotPasswordLink")}
             </Button>
             <Button
               type="button"

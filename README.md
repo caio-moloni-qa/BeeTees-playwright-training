@@ -203,12 +203,13 @@ Sessions use `bt_sid` HttpOnly cookie + in-memory server `Map`.
 - Promo carousel
 - Menu category filter and search
 - Product spicy badges and calories meter
+- "Feeling hungry?" meter on its own screen — picks 4 items from the catalog by calorie quartile, from a little hungry to starving
 - Guest checkout flow
 - DB-backed login, mandatory-location signup, profile, logout, previous orders, localized reorder prompt, and success animations
 - Delivery drawer with store availability
 - Cart drawer with quantity controls and toast feedback
 - Item customizer with add-ons
-- Checkout with card validation, tip, and donation controls
+- Checkout with card validation, tip, donation, and promo code controls
 - Confirmation page with ETA and delivery summary
 
 ## Architecture
@@ -218,7 +219,10 @@ src/App.tsx
 |-- MenuPage
 |   |-- PromoBanner
 |   |-- CategoryFilter
+|   |-- HungerButton
 |   |-- MenuSearch
+|   `-- ProductCard
+|-- HungerMeterPage
 |   `-- ProductCard
 |-- CartDrawer
 |-- LocationDrawer
@@ -301,6 +305,14 @@ Number: 4111111111111111
 Expiry: 1228
 CVC: 123
 ```
+
+Promo codes (checkout, client-side validation, no API round-trip):
+
+| Code | Type | Rule |
+|---|---|---|
+| `WELCOME10` | percent | 10% off the subtotal, no minimum |
+| `SAVE5` | fixed | $5 off, $15 minimum order |
+| `BEETEES2024` | percent | always expired — for negative testing |
 
 ## MCP
 

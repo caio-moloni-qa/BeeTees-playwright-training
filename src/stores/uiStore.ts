@@ -6,7 +6,10 @@ export type AppView =
   | "confirmation"
   | "login"
   | "signup"
-  | "profile";
+  | "profile"
+  | "forgot-password"
+  | "reset-password"
+  | "hunger";
 
 export type MenuFilter = "all" | "burger" | "tenders" | "combo" | "drink" | "side";
 
@@ -27,6 +30,11 @@ type UiState = {
    * The location-save handler reads this, adds the item, then clears it.
    */
   pendingAddProductId: string | null;
+  /**
+   * Hands the dev reset token from ForgotPasswordPage to ResetPasswordPage
+   * without a real router/query string. Cleared once the reset page reads it.
+   */
+  pendingResetToken: string;
 
   setView: (view: AppView) => void;
   setMenuFilter: (filter: MenuFilter) => void;
@@ -39,6 +47,7 @@ type UiState = {
   openCustomizer: (productId: string) => void;
   closeCustomizer: () => void;
   setPendingAddProductId: (productId: string | null) => void;
+  setPendingResetToken: (token: string) => void;
 };
 
 export const useUiStore = create<UiState>((set) => ({
@@ -51,6 +60,7 @@ export const useUiStore = create<UiState>((set) => ({
   pageSpinnerVisible: false,
   customizerProductId: null,
   pendingAddProductId: null,
+  pendingResetToken: "",
 
   setView: (view) => set({ view }),
   setMenuFilter: (menuFilter) => set({ menuFilter }),
@@ -64,4 +74,5 @@ export const useUiStore = create<UiState>((set) => ({
   openCustomizer: (customizerProductId) => set({ customizerProductId }),
   closeCustomizer: () => set({ customizerProductId: null }),
   setPendingAddProductId: (pendingAddProductId) => set({ pendingAddProductId }),
+  setPendingResetToken: (pendingResetToken) => set({ pendingResetToken }),
 }));
